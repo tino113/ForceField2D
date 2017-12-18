@@ -38,7 +38,11 @@ class fField2D():
                     # add the force to the cell
                     c.addForce(p.force)
                     c.incrParts()
-            c.averageForce()        
+            c.averageForce()
+            
+    def damp(self, factor):
+        for c in self.cells:
+            c.force -= c.force * factor       
         
     def drawField(self,layer,col = color(0,255,255,255),weight = 1,vectMult = 1):
         halfCellw = self.cellw/2

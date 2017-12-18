@@ -7,15 +7,13 @@ https://github.com/tino113/forceField2D.git
 """
 import particles
 import fField2D
+import step
 
 ff = fField2D.fField2D()
 parts = particles.particles()
-startTime = 0
-lastTime = 0
-cumulativeDeltaT = 0
-simulationStepsPerSecond = 30
-simulationFixedTimestep = 30
 speed = 1
+partStp = step.step()
+cellStp = step.step()
 
 debugLayer = PGraphics
 drawLayer = PGraphics
@@ -50,26 +48,33 @@ def setup():
     global scaleFactor
     global ff
     global parts
-    global lastTime
-    global cumulativeDeltaT
     global debugLayer
     global drawLayer
+    global partStp
+    global cellStp
     size(500,500)
     clear()
     
     debugLayer = createGraphics(width,height)
     drawLayer = createGraphics(width,height)
     
+    partStp = step.step()
+    partStp.init(30,30)
+    
+    cellStp = step.step()
+    cellStp.init(60,60)
+    
     unitTests()
     lastTime = millis()
     cumulativeDeltaT = 0
     
-def simulationStep(deltaT):
+def particleSimulation(speed):
     global ff
     global parts
-    parts.simulate(deltaT)
+    parts.simulate(speed)
     parts.addFieldForces(ff)
     parts.damp(0.02)
+    
     
     #loop the world
     for p in parts.particles:
@@ -81,23 +86,21 @@ def simulationStep(deltaT):
             p.pos.y += height
         elif p.pos.y > height:
             p.pos.y -= height
+            
+def fieldSimulation(speed):
+    ff.damp(0.00001)
     
 def draw():
     global scaleFactor
     global ff
     global parts
-    global simulationFixedTimestep
-    global startTime
-    global lastTime
-    global cumulativeDeltaT
     global debugLayer
     global drawLayer
     global speed
-    global simulationStepsPerSecond
+    global partStp
+    global cellStp
     clear()
-    tStep = 1/float(simulationFixedTimestep)
-    timeAdjust = simulationStepsPerSecond/float(simulationFixedTimestep)
-    
+        
     debugLayer.beginDraw()
     debugLayer.clear()
     debugLayer.endDraw()
@@ -111,15 +114,9 @@ def draw():
     parts.drawVels(debugLayer,2,scaleFactor)
     parts.drawParts(drawLayer,3)
     ff.drawField(debugLayer,color(0,255,255,100),2,scaleFactor)
-    currentT = millis()
-    deltaT = (currentT - lastTime) * 0.001
-    cumulativeDeltaT += deltaT
-    lastTime = currentT
     
-    if cumulativeDeltaT > tStep :
-        for i in range(floor(cumulativeDeltaT / tStep)):
-            simulationStep(speed * timeAdjust)
-            cumulativeDeltaT -= tStep
+    cellStp.doStep(lambda: fieldSimulation(speed))
+    partStp.doStep(lambda: particleSimulation(speed))
             
     image(debugLayer,0,0)
     image(drawLayer,0,0)

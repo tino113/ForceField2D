@@ -34,7 +34,7 @@ class particle():
         self.force = PVector(0,0)
         
     def damp(self,factor):
-        self.force += self.vel * -factor
+        self.force -= self.vel * factor
     
     def simulate(self,speed):
         self.pos += self.vel * speed
