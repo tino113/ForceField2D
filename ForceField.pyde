@@ -14,7 +14,7 @@ parts = particles.particles()
 speed = 1
 partStp = step.step()
 cellStp = step.step()
-totalParts = 300
+totalParts = 1200
 
 debugLayer = PGraphics
 drawLayer = PGraphics
@@ -36,7 +36,7 @@ def unitTests():
     #Test2: add some forces
     parts = particles.particles()
     parts.init(totalParts)
-    parts.initRandomLocs(PVector(0,0),PVector(width,height/2))
+    parts.initRandomLocs(PVector(0,0),PVector(width,height))
     #parts.addRandomForces(PVector(-5,-5),PVector(5,5))
     #parts.drawForces(debugLayer,2,scaleFactor)
     #parts.drawVels(debugLayer,2,scaleFactor)
@@ -53,7 +53,7 @@ def setup():
     global drawLayer
     global partStp
     global cellStp
-    size(500,500)
+    size(1000,1000)
     clear()
     frameRate(15)
     
@@ -93,10 +93,11 @@ def particleSimulation(speed):
 def fieldSimulation(speed):
     global ff
     global parts
-    #ff.addRandomForces(PVector(-0.001,-0.001),PVector(0.001,0.001))
+    global debugLayer
+    ff.addRandomForces(PVector(-0.001,-0.001),PVector(0.001,0.001))
     ff.damp(0.1)
     ff.calcPressure(parts)
-    ff.pressureForce(0.01)
+    ff.pressureForce(debugLayer,3,0.025)
     
 def draw():
     global scaleFactor

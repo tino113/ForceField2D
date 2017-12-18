@@ -67,7 +67,7 @@ class fField2D():
                 y = 0
             elif y >= self.resY:
                 y = self.resY-1
-        return self.cells[self.xyInds[x][y]]
+        return self.cells[self.xyInds[y][x]]
     
     def getCellxy(self,ind):
         for y in range(len(self.xyInds)):
@@ -88,26 +88,30 @@ class fField2D():
             for c in self.cells:
                 c.pressure = float(c.partsInCell)/idealPressure
     
-    def pressureForce(self, factor = 0.1):
+    def pressureForce(self,layer, dst = 1, factor = 0.1):
         #force from high to low pressure
         for i in range(self.numCells):
             c = self.cells[i]
             myX = self.getCellxy(i)[0]
             myY = self.getCellxy(i)[1]
             count = 0
-            for x in range(-3,4):
-                for y in range(-3,4):
+            tforce = PVector(0,0)
+            diff = 0
+            for x in range(-dst,dst+1):
+                for y in range(-dst,dst+1):
                     if not(x == 0 and y == 0):
                         c2 = self.cellxy(myX+x,myY+y,'Other')
-                        tforce = PVector(0,0)
-                        diff = 0
-                        if c.pressure > c2.pressure:
-                            diff = c.pressure - c2.pressure
-                            tforce = (c2.centre - c.centre)
-                        tforce.normalize()
-                        tforce *= factor
+                        diff = c.pressure - c2.pressure
+                        if diff > 0:
+                            #layer.beginDraw()
+                            #layer.stroke(color(255,0,0,100))
+                            #layer.line(c2.centre.x,c2.centre.y,c.centre.x,c.centre.y)
+                            #layer.endDraw()
+                            tforce += (c2.centre - c.centre) * lerp(1,0,c2.pressure)
                         count+=1
-            c.addForce(tforce/count)
+            tforce.normalize()
+            if count > 0:
+                c.addForce((tforce/float(count)) * factor)
             
     def drawPressure(self,layer,lowPressure = color(0,0,255,100), highPressure = color(255,0,0,100)):
         layer.beginDraw()
@@ -140,7 +144,8 @@ class fField2D():
             layer.textSize(self.h/(self.resY*4))
             myX = self.getCellxy(i)[0]
             myY = self.getCellxy(i)[1]
-            layer.text(str(myX)+","+str(myY),c.origin.x+4,c.origin.y + 14)
+            layer.text(str(myX)+","+str(myY),c.origin.x+4,c.origin.y + self.h/(self.resY*4))
+            layer.text(str(i),c.origin.x+4,c.origin.y + (self.h/(self.resY*4))*2)
             eol = c.centre + c.force * vectMult
             eol2 = c.force * 0.2 * vectMult
             tri = eol - eol2
