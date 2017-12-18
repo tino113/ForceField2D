@@ -39,9 +39,6 @@ class fField2D():
                     c.addForce(p.force)
                     c.incrParts()
             c.averageForce()        
-    
-    def applyOutputfs(self,positions):
-        pass
         
     def drawField(self,layer,col = color(0,255,255,255),weight = 1,vectMult = 1):
         halfCellw = self.cellw/2

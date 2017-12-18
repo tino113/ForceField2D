@@ -13,6 +13,7 @@ parts = particles.particles()
 startTime = 0
 lastTime = 0
 cumulativeDeltaT = 0
+simulationStepsPerSecond = 30
 simulationFixedTimestep = 30
 speed = 1
 
@@ -31,17 +32,17 @@ def unitTests():
     
     #Init a new fField
     ff = fField2D.fField2D()
-    ff.init(10,10,PVector(0,0),width,height)
+    ff.init(5,5,PVector(0,0),width,height)
     
     #Test2: add some forces
     parts = particles.particles()
     parts.init(100)
     parts.initRandomLocs(PVector(0,0),PVector(width,height))
-    parts.addRandomForces(PVector(-10,-10),PVector(10,10))
+    parts.addRandomForces(PVector(-5,-5),PVector(5,5))
     #parts.drawForces(debugLayer,2,scaleFactor)
     #parts.drawVels(debugLayer,2,scaleFactor)
     #parts.drawParts(drawLayer,3)
-    ff.sumInputfs(parts)
+    #ff.sumInputfs(parts)
     
     #ff.drawField(debugLayer,color(0,255,255,200),2,scaleFactor)
     
@@ -53,7 +54,6 @@ def setup():
     global cumulativeDeltaT
     global debugLayer
     global drawLayer
-    frameRate(30)
     size(500,500)
     clear()
     
@@ -65,8 +65,11 @@ def setup():
     cumulativeDeltaT = 0
     
 def simulationStep(deltaT):
+    global ff
+    global parts
     parts.simulate(deltaT)
-    parts.damp(0.05)
+    parts.addFieldForces(ff)
+    parts.damp(0.02)
     
     #loop the world
     for p in parts.particles:
@@ -90,8 +93,10 @@ def draw():
     global debugLayer
     global drawLayer
     global speed
+    global simulationStepsPerSecond
     clear()
     tStep = 1/float(simulationFixedTimestep)
+    timeAdjust = simulationStepsPerSecond/float(simulationFixedTimestep)
     
     debugLayer.beginDraw()
     debugLayer.clear()
@@ -113,7 +118,7 @@ def draw():
     
     if cumulativeDeltaT > tStep :
         for i in range(floor(cumulativeDeltaT / tStep)):
-            simulationStep(speed)
+            simulationStep(speed * timeAdjust)
             cumulativeDeltaT -= tStep
             
     image(debugLayer,0,0)

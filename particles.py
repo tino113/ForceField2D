@@ -116,6 +116,12 @@ class particles():
                             tri.x + norml.x , tri.y + norml.y,
                             tri.x - norml.x , tri.y - norml.y )
         layer.endDraw()
+        
+    def addFieldForces(self,field):
+        for c in field.cells:
+            for p in self.particles:
+                if c.posInCell(p.pos):
+                    p.addForce(c.force)
     
     def damp(self,factor):
         for p in self.particles:
