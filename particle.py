@@ -20,3 +20,9 @@ class particle():
     
     def setCol(self,col):
         self.col = col
+        
+    def addVel(self,vel):
+        self.vel += vel
+
+    def addForce(self,force):
+        self.force += force

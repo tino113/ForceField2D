@@ -22,7 +22,8 @@ def unitTests():
     parts = particles.particles()
     parts.init(200)
     parts.initRandomLocs(PVector(0,0),PVector(width,height))
-    ff.sumInputfs(parts.getPositions(),parts.getForces())
+    parts.addRandomForces(PVector(-1,-1),PVector(1,1))
+    ff.sumInputfs(parts)
     
 def setup():
     size(500,500)

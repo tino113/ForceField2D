@@ -1,6 +1,7 @@
 """
 fField2D Class definition
 """
+import cell
 
 class fField2D():
     
@@ -20,13 +21,19 @@ class fField2D():
         for y in range(resY):
             row = []
             for x in range(resX):
-                row.append([PVector(0,0)])
-            self.cells.append(row)
-                
+                c = cell.cell()
+                c.init()
+                self.cells.append(c)
         
     # parameters in the form of lists of forces recived and applied as well as a list of objects to affect
-    def sumInputfs(self,positions,forces):
-        pass
+    def sumInputfs(self,parts):
+        for p in parts.particles:
+            # check which cell the particle belongs to
+            for c in self.cells:
+                if c.posInCell(p.pos):
+                    pass
+                    
+            # add the force to the cell
     
     def applyOutputfs(self,positions):
         pass
@@ -46,7 +53,7 @@ class fField2D():
         for y in range(self.resY):
             for x in range(self.resX):
                 layer.rect(cellw *x ,cellh *y, cellw,cellh)
-                vect = self.cells[y][x][0] * vectMult
+                vect = self.cells[y*self.resX+x].origin * vectMult
                 cellCentre = PVector(cellw *x + halfCellw, cellh *y + halfCellh)
                 layer.line( cellCentre.x , cellCentre.y , cellCentre.x + vect.x, cellCentre.y + vect.y)
         layer.endDraw()

@@ -19,6 +19,14 @@ class particles():
     def initRandomLocs(self, f = PVector(0,0), t = PVector(0,0)):
         for i in range(self.numParts):
             self.particles[i].setPos(PVector(random(f.x,t.x),random(f.y,t.y)))
+            
+    def addRandomVels(self, s = PVector(0,0), e = PVector(0,0)):
+        for i in range(self.numParts):
+            self.particles[i].addVel(PVector(random(s.x,e.x),random(s.y,e.y)))
+            
+    def addRandomForces(self, s = PVector(0,0), e = PVector(0,0)):
+        for i in range(self.numParts):
+            self.particles[i].addForce(PVector(random(s.x,e.x),random(s.y,e.y)))
 
     def initRandomColors(self):
         for i in range(self.numParts):
