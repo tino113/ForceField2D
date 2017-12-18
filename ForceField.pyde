@@ -5,6 +5,7 @@ Create 'force fields' of arbitrary resolution use this to
 affect the positions and attributes of particles and simulations
 https://github.com/tino113/forceField2D.git
 """
+import particle
 
 class fField2D():
     
@@ -55,7 +56,6 @@ class fField2D():
                 layer.line( cellCentre.x , cellCentre.y , cellCentre.x + vect.x, cellCentre.y + vect.y)
         layer.endDraw()
         image(layer,self.pos.x,self.pos.y)
-        
 
 def unitTests():
     print("Begin Unit Testing!")
@@ -66,6 +66,11 @@ def unitTests():
     
     #Test1: draw the field
     ff.drawField(color(0,255,255),1,1)
+    
+    #Test2: add some forces
+    parts = particle.particle()
+    parts.init()
+    ff.sumInputfs(particles.pos,particles.force)
     
 def setup():
     size(500,500)
