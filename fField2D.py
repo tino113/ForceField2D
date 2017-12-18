@@ -13,6 +13,8 @@ class fField2D():
     h = 0
     cellw = 0
     cellh = 0
+    numCells = 0
+    averagePsinCell = 0
     
     def init(self,resX,resY,position = PVector(0,0),w = 100,h = 100):
         self.pos = position
@@ -22,6 +24,8 @@ class fField2D():
         self.resY = resY
         self.cellw = float(self.w) / self.resX 
         self.cellh = float(self.h) / self.resY
+        self.numCells = self.resX * self.resY
+        self.averagePsinCell = 0
         for y in range(resY):
             row = []
             for x in range(resX):
@@ -42,7 +46,30 @@ class fField2D():
             
     def damp(self, factor):
         for c in self.cells:
-            c.force -= c.force * factor       
+            c.force -= c.force * factor
+            
+    def pressure(self, parts):
+        total = 0
+        for c in self.cells:
+            total += c.calcPartsInCell(parts)
+        self.averagePsinCell = float(total)/self.numCells
+        
+        if self.averagePsinCell > 0:
+            for c in self.cells:
+                c.pressure = c.partsInCell/self.averagePsinCell
+            
+    def drawPressure(self,layer,lowPressure = color(0,0,255,100), highPressure = color(255,0,0,100)):
+        layer.beginDraw()
+        # draw each cell
+        for c in self.cells:
+            layer.noStroke()
+            layer.fill(lerpColor(lowPressure,highPressure,c.pressure))
+            layer.rect(c.origin.x,c.origin.y,c.w,c.h)
+        layer.endDraw()
+        
+    def addRandomForces(self, s = PVector(0,0), e = PVector(0,0)):
+        for c in self.cells:
+            c.addForce(PVector(random(s.x,e.x),random(s.y,e.y)))
         
     def drawField(self,layer,col = color(0,255,255,255),weight = 1,vectMult = 1):
         halfCellw = self.cellw/2

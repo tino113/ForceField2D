@@ -14,6 +14,7 @@ parts = particles.particles()
 speed = 1
 partStp = step.step()
 cellStp = step.step()
+totalParts = 500
 
 debugLayer = PGraphics
 drawLayer = PGraphics
@@ -34,7 +35,7 @@ def unitTests():
     
     #Test2: add some forces
     parts = particles.particles()
-    parts.init(100)
+    parts.init(totalParts)
     parts.initRandomLocs(PVector(0,0),PVector(width,height))
     parts.addRandomForces(PVector(-5,-5),PVector(5,5))
     #parts.drawForces(debugLayer,2,scaleFactor)
@@ -59,22 +60,23 @@ def setup():
     drawLayer = createGraphics(width,height)
     
     partStp = step.step()
-    partStp.init(30,30)
+    partStp.init(15)
+    partStp.threadedStep(lambda: particleSimulation(speed))
     
     cellStp = step.step()
-    cellStp.init(60,60)
+    cellStp.init(2)
+    cellStp.threadedStep(lambda: fieldSimulation(speed))
     
     unitTests()
     lastTime = millis()
     cumulativeDeltaT = 0
     
 def particleSimulation(speed):
-    global ff
     global parts
+    global ff
     parts.simulate(speed)
     parts.addFieldForces(ff)
     parts.damp(0.02)
-    
     
     #loop the world
     for p in parts.particles:
@@ -88,7 +90,11 @@ def particleSimulation(speed):
             p.pos.y -= height
             
 def fieldSimulation(speed):
+    global ff
+    global parts
+    ff.addRandomForces(PVector(-0.01,-0.01),PVector(0.01,0.01))
     ff.damp(0.00001)
+    ff.pressure(parts)
     
 def draw():
     global scaleFactor
@@ -113,10 +119,11 @@ def draw():
     #parts.drawForces(debugLayer,2,scaleFactor)
     parts.drawVels(debugLayer,2,scaleFactor)
     parts.drawParts(drawLayer,3)
-    ff.drawField(debugLayer,color(0,255,255,100),2,scaleFactor)
+    ff.drawField(debugLayer,color(0,255,255,100),2,scaleFactor*10)
+    ff.drawPressure(debugLayer)
     
-    cellStp.doStep(lambda: fieldSimulation(speed))
-    partStp.doStep(lambda: particleSimulation(speed))
+    #cellStp.doStep(lambda: fieldSimulation(speed))
+    #partStp.doStep(lambda: particleSimulation(speed))
             
     image(debugLayer,0,0)
     image(drawLayer,0,0)

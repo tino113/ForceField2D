@@ -9,6 +9,7 @@ class cell():
     h = 0
     force = PVector(0,0)
     partsInCell = 0
+    pressure = 0
     
     def init(self,origin = PVector(),w = 1,h = 1, force = PVector(0,0)):
         self.origin = origin
@@ -26,6 +27,13 @@ class cell():
         if pos.x > self.origin.x and pos.x < self.origin.x + self.w and pos.y > self.origin.y and pos.y < self.origin.y + self.h:
             return True        
         return False
+    
+    def calcPartsInCell(self,parts):
+        partsInCell = 0
+        for p in parts.particles:
+            if self.posInCell(p.pos):
+                partsInCell += 1
+        return partsInCell
     
     def incrParts(self):
         self.partsInCell += 1

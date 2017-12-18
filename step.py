@@ -1,6 +1,7 @@
 """
 Step Class definition
 """
+import thread
 
 class step():
     
@@ -13,8 +14,9 @@ class step():
     deltaT = 0
     cumulativeDeltaT = 0
     lastTime = 0
+    running = False
     
-    def init(self,simulationStepsPerSecond = 30, simulationFixedTimestep = 30):
+    def init(self, simulationFixedTimestep = 30, simulationStepsPerSecond = 30):
         self.simulationStepsPerSecond = simulationStepsPerSecond
         self.simulationFixedTimestep = simulationFixedTimestep
         self.tStep = 1/float(simulationFixedTimestep)
@@ -23,7 +25,7 @@ class step():
         self.startT = millis()
         self.currentT = millis()
         self.lastTime = self.currentT
-        
+    
     def doStep(self,function):
         self.currentT = millis()
         self.deltaT = (self.currentT - self.lastTime) * 0.001
@@ -34,3 +36,14 @@ class step():
             for i in range(floor(self.cumulativeDeltaT / self.tStep)):
                 function()
                 self.cumulativeDeltaT -= self.tStep
+    
+    def threadedStep(self, function):
+        self.running = True
+        thread.start_new_thread( self.loopSteps, (function, ) )
+    
+    def loopSteps(self, function):
+        while self.running:
+            self.doStep(function)
+        
+        
+    
