@@ -21,6 +21,7 @@ def unitTests():
     #Test2: add some forces
     parts = particle.particle()
     parts.init()
+    parts.initRandomLocs(PVector(0,0),PVector(width,height))
     ff.sumInputfs(parts.pos,parts.force)
     
 def setup():
