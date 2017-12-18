@@ -43,29 +43,32 @@ class fField2D():
     def applyOutputfs(self,positions):
         pass
         
-    def drawField(self,col,weight = 1,vectMult = 1):
+    def drawField(self,layer,col = color(0,255,255,255),weight = 1,vectMult = 1):
         halfCellw = self.cellw/2
         halfCellh = self.cellh/2
-        layer = createGraphics(self.w,self.h)
+        col2 = col
+        if alpha(col) < 255:
+            col2 = color(red(col),green(col),blue(col),round(float(alpha(col))/2))
         layer.beginDraw()
-        layer.clear()
         layer.strokeWeight(weight)
         layer.stroke(col)
         # draw each cell
         for c in self.cells:
             layer.noFill()
+            layer.stroke(col2)
             layer.rect(c.origin.x,c.origin.y,c.w,c.h)
             cellCentre = PVector(c.origin.x + halfCellw, c.origin.y + halfCellh)
             eol = cellCentre + c.force * vectMult
             eol2 = c.force * 0.2 * vectMult
             tri = eol - eol2
+            layer.stroke(col)
             layer.line( cellCentre.x , cellCentre.y , eol.x, eol.y)
             norml = PVector(c.force.x,c.force.y)
             norml = norml.rotate(HALF_PI) * vectMult * 0.1
+            layer.noStroke()
             layer.fill(col)
             layer.triangle( eol.x , eol.y,
                         tri.x + norml.x , tri.y + norml.y,
                         tri.x - norml.x , tri.y - norml.y )
                 
         layer.endDraw()
-        image(layer,self.pos.x,self.pos.y)

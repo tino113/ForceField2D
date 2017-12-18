@@ -69,10 +69,8 @@ class particles():
             colors.append(p.col)
         return colors
 
-    def drawParts(self,sMult = 1):
-        layer = createGraphics(width,height)
+    def drawParts(self,layer,sMult = 1):
         layer.beginDraw()
-        layer.clear()
         # draw each particle
         for p in self.particles:
             layer.strokeWeight(p.size * sMult)
@@ -80,54 +78,49 @@ class particles():
             layer.fill(p.col)
             layer.point( p.pos.x , p.pos.y )
         layer.endDraw()
-        image(layer,0,0)
         
-    def drawVels(self,s = 1,mult = 1,col = color(0,255,0,200)):
-        layer = createGraphics(width,height)
+    def drawVels(self,layer,s = 1,mult = 1,col = color(0,255,0,100)):
         layer.beginDraw()
-        layer.clear()
         layer.fill(col)
         layer.strokeWeight(s)
-        layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
+            layer.stroke(col)
             eol = p.pos + p.vel * mult
             eol2 = p.vel * 0.2 * mult
             tri = eol - eol2
             layer.line( p.pos.x , p.pos.y, eol.x , eol.y )
             norml = PVector(p.vel.x,p.vel.y)
             norml = norml.rotate(HALF_PI) * mult * 0.1
+            layer.noStroke()
             layer.triangle( eol.x , eol.y,
                             tri.x + norml.x , tri.y + norml.y,
                             tri.x - norml.x , tri.y - norml.y )
         layer.endDraw()
-        image(layer,0,0)
         
-    def drawForces(self,s = 1,mult = 1,col = color(255,0,255,200)):
-        layer = createGraphics(width,height)
+    def drawForces(self,layer,s = 1,mult = 1,col = color(255,0,255,100)):
         layer.beginDraw()
-        layer.clear()
         layer.fill(col)
         layer.strokeWeight(s)
-        layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
+            layer.stroke(col)
             eol = p.pos + p.force * mult
             eol2 = p.force * 0.2 * mult
             tri = eol - eol2
             layer.line( p.pos.x , p.pos.y, eol.x , eol.y )
             norml = PVector(p.force.x,p.force.y)
             norml = norml.rotate(HALF_PI) * mult * 0.1
+            layer.noStroke()
             layer.triangle( eol.x , eol.y,
                             tri.x + norml.x , tri.y + norml.y,
                             tri.x - norml.x , tri.y - norml.y )
         layer.endDraw()
-        image(layer,0,0)
     
     def damp(self,factor):
         for p in self.particles:
             p.damp(factor)
     
-    def simulate(self,timestep):
+    def simulate(self,speed):
         for p in self.particles:
-            p.simulate(timestep)
+            p.simulate(speed)
