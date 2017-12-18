@@ -7,6 +7,10 @@ import particle
 class particles():
     
     particles = []
+    minX = 0
+    maxX = 0
+    minY = 0
+    maxY = 0
     numParts = 0
     
     def init(self, numParts):
@@ -15,10 +19,21 @@ class particles():
             p = particle.particle()
             p.init()
             self.particles.append(p)
+            
+    def checkMinMax(self,pos):
+        if pos.x < self.minX:
+            self.minX = pos.x
+        elif pos.x > self.maxX:
+            self.maxX = pos.x
+        if pos.y < self.minY:
+            self.minY = pos.y
+        elif pos.y > self.maxY:
+            self.maxY = pos.y
     
     def initRandomLocs(self, f = PVector(0,0), t = PVector(0,0)):
         for i in range(self.numParts):
             self.particles[i].setPos(PVector(random(f.x,t.x),random(f.y,t.y)))
+            self.checkMinMax(self.particles[i].pos)
             
     def addRandomVels(self, s = PVector(0,0), e = PVector(0,0)):
         for i in range(self.numParts):
@@ -53,8 +68,8 @@ class particles():
             colors.append(p.col)
         return colors
 
-    def drawParts(self,col = color(255),s = 1,w = 100,h = 100,origin = PVector(0,0)):
-        layer = createGraphics(w,h)
+    def drawParts(self,s = 1,col = color(255)):
+        layer = createGraphics(ceil(self.maxX-self.minX),ceil(self.maxY-self.minY))
         layer.beginDraw()
         layer.clear()
         layer.noFill()
@@ -64,10 +79,10 @@ class particles():
         for p in self.particles:
             layer.point( p.pos.x , p.pos.y )
         layer.endDraw()
-        image(layer,origin.x,origin.y)
+        image(layer,floor(self.minX),floor(self.minX))
         
-    def drawVels(self,col = color(0,255,0,200),s = 1,w = 100,h = 100,origin = PVector(0,0)):
-        layer = createGraphics(w,h)
+    def drawVels(self,s = 1,mult = 1,col = color(0,255,0,200)):
+        layer = createGraphics(ceil(self.maxX-self.minX),ceil(self.maxY-self.minY))
         layer.beginDraw()
         layer.clear()
         layer.noFill()
@@ -75,12 +90,12 @@ class particles():
         layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
-            layer.line( p.pos.x , p.pos.y, p.pos.x + p.vel.x , p.pos.y + p.vel.y )
+            layer.line( p.pos.x , p.pos.y, p.pos.x + p.vel.x * mult , p.pos.y + p.vel.y * mult )
         layer.endDraw()
-        image(layer,origin.x,origin.y)
+        image(layer,floor(self.minX),floor(self.minX))
         
-    def drawForces(self,col = color(255,0,255,200),s = 1,w = 100,h = 100,origin = PVector(0,0)):
-        layer = createGraphics(w,h)
+    def drawForces(self,s = 1,mult = 1,col = color(255,0,255,200)):
+        layer = createGraphics(ceil(self.maxX-self.minX),ceil(self.maxY-self.minY))
         layer.beginDraw()
         layer.clear()
         layer.noFill()
@@ -88,6 +103,6 @@ class particles():
         layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
-            layer.line( p.pos.x , p.pos.y, p.pos.x + p.force.x , p.pos.y + p.force.y )
+            layer.line( p.pos.x , p.pos.y, p.pos.x + p.force.x * mult , p.pos.y + p.force.y * mult )
         layer.endDraw()
-        image(layer,origin.x,origin.y)
+        image(layer,floor(self.minX),floor(self.minX))
