@@ -16,13 +16,16 @@ def unitTests():
     ff.init(10,10,PVector(0,0),width,height)
     
     #Test1: draw the field
-    ff.drawField(color(0,255,255),1,1)
+    ff.drawField(color(0,255,255,200),1,1)
     
     #Test2: add some forces
     parts = particles.particles()
     parts.init(200)
     parts.initRandomLocs(PVector(0,0),PVector(width,height))
     parts.addRandomForces(PVector(-1,-1),PVector(1,1))
+    parts.drawParts()
+    parts.drawForces()
+    parts.drawVels()
     ff.sumInputfs(parts)
     
 def setup():

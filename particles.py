@@ -52,3 +52,42 @@ class particles():
         for p in self.particles:
             colors.append(p.col)
         return colors
+
+    def drawParts(self,col = color(255),s = 1,w = 100,h = 100,origin = PVector(0,0)):
+        layer = createGraphics(w,h)
+        layer.beginDraw()
+        layer.clear()
+        layer.noFill()
+        layer.strokeWeight(s)
+        layer.stroke(col)
+        # draw each particle
+        for p in self.particles:
+            layer.point( p.pos.x , p.pos.y )
+        layer.endDraw()
+        image(layer,origin.x,origin.y)
+        
+    def drawVels(self,col = color(0,255,0,200),s = 1,w = 100,h = 100,origin = PVector(0,0)):
+        layer = createGraphics(w,h)
+        layer.beginDraw()
+        layer.clear()
+        layer.noFill()
+        layer.strokeWeight(s)
+        layer.stroke(col)
+        # draw each particle velocity
+        for p in self.particles:
+            layer.line( p.pos.x , p.pos.y, p.pos.x + p.vel.x , p.pos.y + p.vel.y )
+        layer.endDraw()
+        image(layer,origin.x,origin.y)
+        
+    def drawForces(self,col = color(255,0,255,200),s = 1,w = 100,h = 100,origin = PVector(0,0)):
+        layer = createGraphics(w,h)
+        layer.beginDraw()
+        layer.clear()
+        layer.noFill()
+        layer.strokeWeight(s)
+        layer.stroke(col)
+        # draw each particle velocity
+        for p in self.particles:
+            layer.line( p.pos.x , p.pos.y, p.pos.x + p.force.x , p.pos.y + p.force.y )
+        layer.endDraw()
+        image(layer,origin.x,origin.y)
