@@ -128,6 +128,6 @@ class particles():
         for p in self.particles:
             p.damp(factor)
     
-    def simulate(self,timestep,speed = 1):
+    def simulate(self,timestep):
         for p in self.particles:
-            p.simulate(timestep, speed)
+            p.simulate(timestep)

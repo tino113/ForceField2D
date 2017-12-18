@@ -13,9 +13,9 @@ parts = particles.particles()
 startTime = 0
 lastTime = 0
 cumulativeDeltaT = 0
-simulationFixedTimestep = 20
+simulationFixedTimestep = 30
 
-scaleFactor = 20
+scaleFactor = 4
 
 def unitTests():
     global scaleFactor
@@ -31,7 +31,7 @@ def unitTests():
     parts = particles.particles()
     parts.init(100)
     parts.initRandomLocs(PVector(0,0),PVector(width,height))
-    parts.addRandomForces(PVector(-1,-1),PVector(1,1))
+    parts.addRandomForces(PVector(-10,-10),PVector(10,10))
     parts.drawForces(2,scaleFactor)
     parts.drawVels(2,scaleFactor)
     parts.drawParts(3)
@@ -53,8 +53,19 @@ def setup():
     cumulativeDeltaT = 0
     
 def simulationStep(deltaT):
-    parts.simulate(deltaT, 0.5)
+    parts.simulate(deltaT)
     parts.damp(0.05)
+    
+    #loop the world
+    for p in parts.particles:
+        if p.pos.x < 0:
+            p.pos.x += width
+        elif p.pos.x > width:
+            p.pos.x -= width
+        if p.pos.y < 0:
+            p.pos.y += height
+        elif p.pos.y > height:
+            p.pos.y -= height
     
 def draw():
     global scaleFactor
@@ -65,15 +76,18 @@ def draw():
     global lastTime
     global cumulativeDeltaT
     clear()
+    tStep = 1/float(simulationFixedTimestep)
         
     parts.drawForces(2,scaleFactor)
     parts.drawVels(2,scaleFactor)
     parts.drawParts(3)
     ff.drawField(color(0,255,255,200),2,scaleFactor)
+    currentT = millis()
+    deltaT = (currentT - lastTime) * 0.001
+    cumulativeDeltaT += deltaT
+    lastTime = currentT
     
-    deltaTime = millis() - lastTime
-    
-    if cumulativeDeltaT > 1/simulationFixedTimestep : 
-        simulationStep(cumulativeDeltaT)
-    else:
-        cumulativeDeltaT += deltaTime
+    if cumulativeDeltaT > tStep :
+        for i in range(floor(cumulativeDeltaT / tStep)):
+            simulationStep(tStep)
+            cumulativeDeltaT -= tStep
