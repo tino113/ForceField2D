@@ -15,8 +15,8 @@ class particle():
             self.vel = PVector(0,0)
             self.cols = color(255)
             
-    def setPos(pos):
+    def setPos(self,pos):
         self.pos = pos
     
-    def setCol(col):
+    def setCol(self,col):
         self.col = col

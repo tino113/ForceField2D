@@ -12,13 +12,13 @@ class particles():
     def init(self, numParts):
         self.numParts = numParts
         for i in range(numParts):
-            p = particle()
+            p = particle.particle()
             p.init()
             self.particles.append(p)
     
     def initRandomLocs(self, f = PVector(0,0), t = PVector(0,0)):
         for i in range(self.numParts):
-            self.particles[i].setPos(random(f,t))
+            self.particles[i].setPos(PVector(random(f.x,t.x),random(f.y,t.y)))
 
     def initRandomColors(self):
         for i in range(self.numParts):
@@ -26,3 +26,21 @@ class particles():
             g = random(0,255)
             b = random(0,255)
             self.particles[i].setCol(color(r,g,b))
+            
+    def getPositions(self):
+        positions = []
+        for p in self.particles:
+            positions.append(p.pos)
+        return positions
+    
+    def getForces(self):
+        forces = []
+        for p in self.particles:
+            forces.append(p.force)
+        return forces
+    
+    def getColors(self):
+        colors = []
+        for p in self.particles:
+            colors.append(p.col)
+        return colors
