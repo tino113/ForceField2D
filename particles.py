@@ -19,6 +19,7 @@ class particles():
             p = particle.particle()
             p.init()
             self.particles.append(p)
+        self.initRandomColors()
             
     def checkMinMax(self,pos):
         if pos.x < self.minX:
@@ -68,41 +69,60 @@ class particles():
             colors.append(p.col)
         return colors
 
-    def drawParts(self,s = 1,col = color(255)):
-        layer = createGraphics(ceil(self.maxX-self.minX),ceil(self.maxY-self.minY))
+    def drawParts(self,sMult = 1):
+        layer = createGraphics(width,height)
         layer.beginDraw()
         layer.clear()
-        layer.noFill()
-        layer.strokeWeight(s)
-        layer.stroke(col)
         # draw each particle
         for p in self.particles:
+            layer.strokeWeight(p.size * sMult)
+            layer.stroke(p.col)
+            layer.fill(p.col)
             layer.point( p.pos.x , p.pos.y )
         layer.endDraw()
-        image(layer,floor(self.minX),floor(self.minX))
+        image(layer,0,0)
         
     def drawVels(self,s = 1,mult = 1,col = color(0,255,0,200)):
-        layer = createGraphics(ceil(self.maxX-self.minX),ceil(self.maxY-self.minY))
+        layer = createGraphics(width,height)
         layer.beginDraw()
         layer.clear()
-        layer.noFill()
+        layer.fill(col)
         layer.strokeWeight(s)
         layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
-            layer.line( p.pos.x , p.pos.y, p.pos.x + p.vel.x * mult , p.pos.y + p.vel.y * mult )
+            eol = p.pos + p.vel * mult
+            eol2 = p.vel * 0.2 * mult
+            tri = eol - eol2
+            layer.line( p.pos.x , p.pos.y, eol.x , eol.y )
+            norml = PVector(p.vel.x,p.vel.y)
+            norml = norml.rotate(HALF_PI) * mult * 0.1
+            layer.triangle( eol.x , eol.y,
+                            tri.x + norml.x , tri.y + norml.y,
+                            tri.x - norml.x , tri.y - norml.y )
         layer.endDraw()
-        image(layer,floor(self.minX),floor(self.minX))
+        image(layer,0,0)
         
     def drawForces(self,s = 1,mult = 1,col = color(255,0,255,200)):
-        layer = createGraphics(ceil(self.maxX-self.minX),ceil(self.maxY-self.minY))
+        layer = createGraphics(width,height)
         layer.beginDraw()
         layer.clear()
-        layer.noFill()
+        layer.fill(col)
         layer.strokeWeight(s)
         layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
-            layer.line( p.pos.x , p.pos.y, p.pos.x + p.force.x * mult , p.pos.y + p.force.y * mult )
+            print(p.force)
+            eol = p.pos + p.force * mult
+            eol2 = p.force * 0.2 * mult
+            tri = eol - eol2
+            layer.line( p.pos.x , p.pos.y, eol.x , eol.y )
+            norml = PVector(p.force.x,p.force.y)
+            norml = norml.rotate(HALF_PI) * mult * 0.1
+            layer.triangle( eol.x , eol.y,
+                            tri.x + norml.x , tri.y + norml.y,
+                            tri.x - norml.x , tri.y - norml.y )
         layer.endDraw()
-        image(layer,floor(self.minX),floor(self.minX))
+        image(layer,0,0)
+        
+    
