@@ -112,7 +112,6 @@ class particles():
         layer.stroke(col)
         # draw each particle velocity
         for p in self.particles:
-            print(p.force)
             eol = p.pos + p.force * mult
             eol2 = p.force * 0.2 * mult
             tri = eol - eol2
@@ -124,5 +123,11 @@ class particles():
                             tri.x - norml.x , tri.y - norml.y )
         layer.endDraw()
         image(layer,0,0)
-        
     
+    def damp(self,factor):
+        for p in self.particles:
+            p.damp(factor)
+    
+    def simulate(self,timestep,speed = 1):
+        for p in self.particles:
+            p.simulate(timestep, speed)

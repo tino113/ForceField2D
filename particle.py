@@ -28,3 +28,14 @@ class particle():
 
     def addForce(self,force):
         self.force += force
+    
+    def forceToVel(self):
+        self.vel += self.force
+        self.force = PVector(0,0)
+        
+    def damp(self,factor):
+        self.force = self.vel * -factor
+    
+    def simulate(self,timestep, speed = 1):
+        self.pos += self.vel * timestep * speed
+        self.forceToVel()
