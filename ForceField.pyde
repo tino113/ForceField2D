@@ -14,7 +14,7 @@ parts = particles.particles()
 speed = 1
 partStp = step.step()
 cellStp = step.step()
-totalParts = 500
+totalParts = 300
 
 debugLayer = PGraphics
 drawLayer = PGraphics
@@ -31,13 +31,13 @@ def unitTests():
     
     #Init a new fField
     ff = fField2D.fField2D()
-    ff.init(5,5,PVector(0,0),width,height)
+    ff.init(10,10,PVector(0,0),width,height)
     
     #Test2: add some forces
     parts = particles.particles()
     parts.init(totalParts)
-    parts.initRandomLocs(PVector(0,0),PVector(width,height))
-    parts.addRandomForces(PVector(-5,-5),PVector(5,5))
+    parts.initRandomLocs(PVector(0,0),PVector(width,height/2))
+    #parts.addRandomForces(PVector(-5,-5),PVector(5,5))
     #parts.drawForces(debugLayer,2,scaleFactor)
     #parts.drawVels(debugLayer,2,scaleFactor)
     #parts.drawParts(drawLayer,3)
@@ -55,16 +55,17 @@ def setup():
     global cellStp
     size(500,500)
     clear()
+    frameRate(15)
     
     debugLayer = createGraphics(width,height)
     drawLayer = createGraphics(width,height)
     
     partStp = step.step()
-    partStp.init(15)
+    partStp.init(20)
     partStp.threadedStep(lambda: particleSimulation(speed))
     
     cellStp = step.step()
-    cellStp.init(2)
+    cellStp.init(15)
     cellStp.threadedStep(lambda: fieldSimulation(speed))
     
     unitTests()
@@ -76,7 +77,7 @@ def particleSimulation(speed):
     global ff
     parts.simulate(speed)
     parts.addFieldForces(ff)
-    parts.damp(0.02)
+    parts.damp(0.002)
     
     #loop the world
     for p in parts.particles:
@@ -92,9 +93,10 @@ def particleSimulation(speed):
 def fieldSimulation(speed):
     global ff
     global parts
-    ff.addRandomForces(PVector(-0.01,-0.01),PVector(0.01,0.01))
-    ff.damp(0.00001)
-    ff.pressure(parts)
+    #ff.addRandomForces(PVector(-0.001,-0.001),PVector(0.001,0.001))
+    ff.damp(0.1)
+    ff.calcPressure(parts)
+    ff.pressureForce(0.01)
     
 def draw():
     global scaleFactor
@@ -117,9 +119,9 @@ def draw():
     
         
     #parts.drawForces(debugLayer,2,scaleFactor)
-    parts.drawVels(debugLayer,2,scaleFactor)
+    #parts.drawVels(debugLayer,2,scaleFactor)
     parts.drawParts(drawLayer,3)
-    ff.drawField(debugLayer,color(0,255,255,100),2,scaleFactor*10)
+    ff.drawField(debugLayer,color(0,255,255,180),2,scaleFactor*1000)
     ff.drawPressure(debugLayer)
     
     #cellStp.doStep(lambda: fieldSimulation(speed))

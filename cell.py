@@ -10,12 +10,17 @@ class cell():
     force = PVector(0,0)
     partsInCell = 0
     pressure = 0
+    currentParts = []
+    centre = PVector(0,0)
     
     def init(self,origin = PVector(),w = 1,h = 1, force = PVector(0,0)):
         self.origin = origin
         self.w = w
         self.h = h
         self.force = force
+        self.pressure = 0
+        self.currentParts = []
+        self.centre = PVector(origin.x + float(w)/2, origin.y + float(h)/2)
         
     def getOrigin(self):
         return self.origin
@@ -29,11 +34,13 @@ class cell():
         return False
     
     def calcPartsInCell(self,parts):
-        partsInCell = 0
+        self.partsInCell = 0
+        self.currentParts = []
         for p in parts.particles:
             if self.posInCell(p.pos):
-                partsInCell += 1
-        return partsInCell
+                self.currentParts.append(p)
+                self.partsInCell += 1
+        return self.partsInCell
     
     def incrParts(self):
         self.partsInCell += 1
